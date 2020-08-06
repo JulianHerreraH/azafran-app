@@ -1,9 +1,9 @@
 <template>
   <v-app dark >
-    <Navbar />
-    <v-content class="indigo lighten-5">
+    <app-navbar />
+    <v-main class="indigo lighten-5">
       <router-view></router-view>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
@@ -15,7 +15,7 @@ export default {
   name: "App",
 
   components: {
-    Navbar,
+    'app-navbar': Navbar,
 
   },
 

@@ -1,34 +1,57 @@
 <template>
   <div>
-    <v-app-bar color="indigo" flat dark>
+    <v-snackbar
+    v-model="snackbar.isVisible"
+    :color="snackbar.color"
+    dark
+    top
+    >
+      {{snackbar.text}}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          dark
+          text
+          v-bind="attrs"
+          @click="snackbar.isVisible = false"
+        >
+          Cerrar
+        </v-btn>
+      </template>
+    </v-snackbar>
+
+    <v-app-bar color="indigo" app flat dark :clipped-left="$vuetify.breakpoint.lgAndUp">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" ></v-app-bar-nav-icon>
-      <v-toolbar-title>Food Blog</v-toolbar-title>
+      <v-toolbar-title  class="text-h5 hidden-sm-and-down">FOOD BLOG</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon>
+      <v-text-field
+        flat
+        solo-inverted
+        hide-details
+        clearable
+        prepend-inner-icon="mdi-magnify"
+        label="Buscar..."
+        class="hidden-sm-and-down "
+        v-model="searchTerm"
+        @keyup.enter="searched"
+      ></v-text-field>
+      <v-spacer></v-spacer>
+      <v-btn icon class="hidden-md-and-up">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
-      <span class="d-none d-sm-flex">{{getDate()}}</span>
+      <v-avatar>
+        <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
+      </v-avatar>
     </v-app-bar>
 
-
-    <v-navigation-drawer v-model="drawer" app temporary dark class="indigo white--text"> 
+    <v-navigation-drawer v-model="drawer" app :clipped="$vuetify.breakpoint.lgAndUp" dark class="indigo white--text"> 
       
-      <v-list-item class="">
-
-        <v-list-item-avatar>
-          <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
-        </v-list-item-avatar>
-
+      <v-list-item class="hidden-md-and-up">
         <v-list-item-content>
-          <v-list-item-title>Username</v-list-item-title>
+          <v-list-item-title class="text-h5">FOOD BLOG</v-list-item-title>
         </v-list-item-content>
-
       </v-list-item>
-
-      <v-divider></v-divider>
-
+      <v-divider class="hidden-md-and-up"> </v-divider>
       <v-list>
-
         <v-list-item
           v-for="item in items"
           :key="item.title"
@@ -52,16 +75,23 @@
 </template>
 
 <script>
-export default {
+import {bus} from '../main'
 
+export default {
   data(){
     return {
-      drawer:false,
+      drawer: null,
+      searchTerm: '',
       items: [
         { title: 'Tablero', icon: 'dashboard', route: '/'},
         { title: 'Mi Cuenta', icon: 'mdi-account', route: '/account'},
         { title: 'Cerrar Sesión', icon: 'mdi-logout', route: '/logout'},
       ],
+      snackbar: {
+        isVisible: false,
+        color: '',
+        text: '',
+      }
     }
   },
   methods: {
@@ -69,6 +99,14 @@ export default {
         const date = new Date().toLocaleDateString();
         return `${date}`
       }, 
+      searched() {
+        bus.$emit('searched', this.searchTerm)
+      }
+  },
+  created() {
+    bus.$on('snackbar', (data) => {
+      this.snackbar = data
+    })
   }
 
 };

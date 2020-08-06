@@ -1,35 +1,50 @@
 <template>
-            <v-col
+        <v-col
         cols="12"
-        sm="4"
+        lg="4"
+        md = "6"
         >
-
-         <v-card class="mx-auto" max-width="400" outlined>
+         <v-card class="mx-auto" outlined>
            <v-img
               class="white--text align-end"
-              height="200px"
-              src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+              :src="imageURL"
+              :aspect-ratio="16/9"
             >
-              <v-card-title class="font-weight-bold">{{dish.name}}</v-card-title>
+              <v-card-title class="font-weight-bold text-xl-h3 text-sm-h4">{{dish.title}}</v-card-title>
             </v-img>
 
-            <v-row class="my-1 px-1" align="center" dense justify="space-between">
-            <v-card-subtitle>{{ formattedDate(dish.date) }}</v-card-subtitle>
+            <v-row class=" px-1" align="center" dense justify="space-between">
+            <v-card-subtitle>{{ formattedDate(dish.timestamp )}}</v-card-subtitle>
             <v-rating v-model="dish.rating" small dense readonly color="amber" class="mx-2"></v-rating>
             </v-row>
 
-
-            <v-card-text class="text--primary">
-              <div>{{dish.ingredients}}</div>
+            <v-card-text class="text--primary text-justify">
+              {{dish.description | truncate(200) }}
+              <!-- <div v-for="ingredient in dish.ingredients" :key="ingredient">{{ingredient}}</div> -->
             </v-card-text>
 
-            <v-card-actions>
-              <v-btn color="indigo" text>
-                Ver más
-              </v-btn>
+            <v-row align="center" dense class="px-3">
+              <v-chip 
+              rounded 
+              small 
+              :color="getColor()" 
+              class="mx-1" 
+              dark 
+              @click.stop="filterByCuisine"
+              >{{dish.cuisine}}</v-chip>
+              <v-chip 
+              rounded 
+              small 
+              :color="getDifficultyColor()" 
+              class="mx-1" 
+              dark 
+              @click.stop="filterByDifficulty"
+              >{{dish.difficulty}}</v-chip>
+            </v-row>
 
-              <v-btn color="red" text>
-                Eliminar
+            <v-card-actions>
+              <v-btn color="indigo" text @click.stop="dishDetail">
+                Ver más
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -38,21 +53,73 @@
 </template>
 
 <script>
+import {bus} from '../main'
+
 export default {
   name: 'DishCard',
-  props: {
-    dish: {
-      id: '',
-      name: '',
-      date: '',
-      ingredients: '',
-      rating: '',
+  data() {
+    return {
+      levels:{
+        easy: 'fácil',
+        medium: 'media',
+        hard: 'difícil'
+      },
+      defaultImage: require('../assets/no_image.jpg')
     }
   },
-  methods: {
-    formattedDate(date) {
-        return date.split('/').reverse().join('/')
+
+  props: {
+    dish: {
+      type: Object,
+      required: true,
     }
+  },
+
+  filters: {
+    truncate(text, stop, clamp) {
+      return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '')
+    }
+  },
+
+  computed: {
+    imageURL() {
+      return this.dish.imageURL || this.defaultImage
+    }
+  },
+
+  methods: {
+    formattedDate(timestamp) {
+      const dateISO = new Date(timestamp).toISOString().substring(0,10)
+      return dateISO.split('-').reverse().join('-')
+    },
+    getColor() {
+      let letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    },
+    getDifficultyColor() {
+      const diff = this.dish.difficulty.toLowerCase()
+      switch(diff) {
+        case this.levels.easy:
+          return 'green'
+        case this.levels.medium:
+          return 'yellow'
+        case this.levels.hard: 
+          return 'red'
+      }
+    },
+    dishDetail() {
+      console.log(this.dish.id) 
+    },
+    filterByCuisine() {
+      bus.$emit('filterDishes', {type: 'cuisine', value: this.dish.cuisine})
+    },
+    filterByDifficulty() {
+      bus.$emit('filterDishes', {type: 'difficulty', value: this.dish.difficulty})
+    },
   }
 }
 </script>
