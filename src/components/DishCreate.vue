@@ -1,10 +1,10 @@
 <template>
   <v-row justify="center">
     <v-dialog v-model="showDialog" 
-    persistent  
-    max-width="60%"
-    class="px-sm-5" 
-    :fullscreen="$vuetify.breakpoint.smAndDown"
+      persistent  
+      max-width="60%"
+      class="px-sm-5" 
+      :fullscreen="$vuetify.breakpoint.smAndDown"
     >
       <template v-slot:activator="{ on: dialog }">
         <v-tooltip left>
@@ -23,7 +23,7 @@
           </v-card-title>
           <v-card-text>
             <v-form class="px-2" ref="form">
-    
+
               <v-file-input
                 label="Foto*"
                 show-size 
@@ -34,7 +34,6 @@
                 @change="filePicked"
               ></v-file-input>
          
-
               <v-row align="center">
                 <v-col cols="12" sm="8">
                   <v-text-field 
@@ -90,9 +89,10 @@
               ></v-textarea>
 
               <div 
-              v-for="(field, index) in dish.ingredients" 
-              :key="index" 
-              class="py-1">
+                v-for="(field, index) in dish.ingredients" 
+                :key="index" 
+                class="py-1"
+              >
                 <v-text-field
                   label="Ingrediente*"
                   v-model.lazy.trim="dish.ingredients[index]"
@@ -103,7 +103,13 @@
                   <template v-slot:append-outer v-if="index == 0">
                     <v-tooltip right>
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon color="green" @click="addIngredientField" v-on="on" v-bind="attrs">
+                        <v-btn 
+                          icon 
+                          color="green" 
+                          @click="addIngredientField" 
+                          v-on="on" 
+                          v-bind="attrs"
+                        >
                           <v-icon center>add_circle_outline</v-icon>
                         </v-btn>
                       </template>
@@ -127,17 +133,17 @@
               <v-row align="center" class="">
                 <v-col cols="12" sm="8">
                   <v-text-field 
-                  label="Link receta (opcional)" 
-                  v-model.lazy.trim="dish.link"
+                    label="Link receta (opcional)" 
+                    v-model.lazy.trim="dish.link"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="4" class="text-center">
                 <h3 class="grey--text ">Calificación*:</h3>
                 <v-rating
-                v-model="dish.rating"
-                color="amber"
-                background-color="orange lighen-3"
-                hover
+                  v-model="dish.rating"
+                  color="amber"
+                  background-color="orange lighen-3"
+                  hover
                 ></v-rating>
                 <small class="red--text text-caption" v-if="noRating">¡Ingresa una calificación!</small>
                 </v-col>
@@ -171,19 +177,20 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn 
-          color="red darken-1" 
-          large  
-          dark 
-          @click.stop="closeForm()"
-          class="my-2 mx-2"
+            color="red darken-1" 
+            large  
+            dark 
+            @click.stop="closeForm()"
+            :disabled="loading"
+            class="my-2 mx-2"
           >Cerrar</v-btn>
           <v-btn 
-          color="indigo darken-1" 
-          large  
-          dark 
-          class="my-2 mx-2"
-          @click.stop="submit" 
-          :loading="loading"
+            color="indigo darken-1" 
+            large  
+            dark 
+            class="my-2 mx-2"
+            @click.stop="submit" 
+            :loading="loading"
           >Guardar</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>

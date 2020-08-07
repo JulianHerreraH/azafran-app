@@ -21,27 +21,36 @@
       </v-col>
     </v-row>
     <div 
-    v-if="hasFiltered" 
-    class="text-center text-h5"
+      v-if="hasFiltered" 
+      class="text-center text-h5"
     >
       {{filterText}} 
       <a 
-      @click="resetDishes" 
-      class="text-decoration-underline text-body-1"
+        @click="resetDishes" 
+        class="text-decoration-underline text-body-1"
       >Ver todos.</a>
     </div>
-    <div 
-    v-if="filteredDishes.length == 0" 
-    @click="resetDishes" 
-    class="blue--text text-center text-h4">
-      {{searchInfo}} 
-    </div>
-    <transition-group v-else name="flip-list" tag="div" class="row" >
+    <v-row 
+      align="center"
+      justify="center"
+      v-if="filteredDishes.length == 0" 
+      @click="resetDishes" 
+      class="blue--text text-center text-h4"
+    >
+      <v-progress-circular
+        indeterminate
+        v-if="loadingDishes"
+        size="64"  
+        color="indigo"
+      ></v-progress-circular>
+      <p>{{searchInfo}} </p>
+    </v-row>
+    <transition-group v-else name="flip-list" tag="div" class="row">
       <dish-card v-for="dish in filteredDishes" :dish="dish" :key="dish.id"> </dish-card>
     </transition-group>
   </v-container>
 
-  <create-dish></create-dish>
+  <dish-create></dish-create>
 
   </div>
 
@@ -49,7 +58,7 @@
 
 <script>
 import DishCard from "@/components/DishCard";
-import CreateDish from "@/components/CreateDish";
+import DishCreate from "@/components/DishCreate";
 import {bus} from '../main'
 import {db} from '../firebase/fb'
 
@@ -57,17 +66,17 @@ export default {
   name: "Home",
   components: {
     'dish-card': DishCard,
-    'create-dish': CreateDish,
+    'dish-create': DishCreate,
   },
   data() {
     return {
       dishes: [], 
-      newDish: null,
       searchTerm: '',
       searchInfo:'',
       filterType: 'title',
       hasFiltered: false,
-      filterText: ''
+      filterText: '',
+      loadingDishes: null
     }
   },
 
@@ -91,7 +100,7 @@ export default {
           case 'title':
             return dish.title.toLowerCase().includes(this.searchTerm) 
           case 'cuisine':
-            this.filterText = `Platillos de ${this.searchTerm}`
+            this.filterText = `Platillos de comida ${this.searchTerm}`
             return dish.cuisine.includes(this.searchTerm) 
           case 'difficulty':
             this.filterText = `Platillos con dificultad ${this.searchTerm}`
@@ -104,6 +113,8 @@ export default {
 
   created() {
 
+    console.log('dash created')
+
     bus.$on('searched', (data) => {
       this.filterType = 'title'
       this.searchTerm = data
@@ -114,6 +125,8 @@ export default {
       this.filterType = data.type
       this.searchTerm = data.value
     })
+
+    this.loadingDishes = true
 
     const collection = db.collection('Dishes').limit(4)
     collection.onSnapshot(res => {
@@ -126,13 +139,17 @@ export default {
             id: change.doc.id
           })
         }
+        if(change.type === 'modified') {
+          const index = this.dishes.findIndex(item => item.id == change.doc.id)
+          this.dishes.splice(index, 1, {...change.doc.data(), id: change.doc.id})
+        }
         if(change.type === 'removed') {
           this.dishes = this.dishes.filter(item => item.id != change.doc.id)
         }
       })
-      
       console.log('Datos Cargados')
       this.searchInfo = 'Ningun platillo encontrado. Ver todos'
+      this.loadingDishes = false
 
     }, (error) => {
       let snackbar = {
