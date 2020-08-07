@@ -98,6 +98,7 @@ export default {
       const filter = this.dishes.filter(dish => {
         switch(this.filterType) {
           case 'title':
+            this.filterText = `Resultados de busqueda ${this.searchTerm}`
             return dish.title.toLowerCase().includes(this.searchTerm) 
           case 'cuisine':
             this.filterText = `Platillos de comida ${this.searchTerm}`
@@ -117,6 +118,7 @@ export default {
 
     bus.$on('searched', (data) => {
       this.filterType = 'title'
+      this.hasFiltered = true
       this.searchTerm = data
     })
 

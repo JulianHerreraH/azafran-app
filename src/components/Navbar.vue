@@ -34,8 +34,19 @@
         v-model="searchTerm"
         @keyup.enter="searched"
       ></v-text-field>
+      <v-text-field   
+        flat
+        solo-inverted
+        dense
+        clearable
+        rounded
+        label="Buscar..."
+        :class="showSearch()"
+        v-model="searchTerm"
+        @keyup.enter="searched"
+      ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn icon class="hidden-md-and-up">
+      <v-btn icon class="hidden-md-and-up" @click="showSearchMobile = !showSearchMobile">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
       <v-avatar>
@@ -91,18 +102,29 @@ export default {
         isVisible: false,
         color: '',
         text: '',
-      }
+      },
+      showSearchMobile: false,
     }
   },
+
   methods: {
       getDate() {
         const date = new Date().toLocaleDateString();
         return `${date}`
       }, 
       searched() {
+        this.showSearchMobile = false
         bus.$emit('searched', this.searchTerm)
+      },
+      showSearch() {
+        if(this.$vuetify.breakpoint.mdAndUp) {
+
+          this.showSearchMobile =  false
+        }
+        return this.showSearchMobile ? 'd-flex mt-5' : 'd-none'
       }
   },
+  
   created() {
     bus.$on('snackbar', (data) => {
       this.snackbar = data
