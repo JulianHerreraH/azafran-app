@@ -4,6 +4,7 @@ import router from './router'
 import vuetify from './plugins/vuetify';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
 import {auth} from './firebase/fb';
+import store from './store'
 
 Vue.config.productionTip = false
 
@@ -15,6 +16,7 @@ auth.onAuthStateChanged(() => {
     app = new Vue({
       router,
       vuetify,
+      store,
       render: h => h(App)
     }).$mount('#app')
 

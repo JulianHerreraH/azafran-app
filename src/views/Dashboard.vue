@@ -74,7 +74,8 @@ export default {
       filterType: 'title',
       hasFiltered: false,
       filterText: '',
-      loadingDishes: null
+      loadingDishes: null,
+      user_id: null
     }
   },
 
@@ -114,7 +115,7 @@ export default {
 
     console.log('dash created')
     
-    console.log(auth.currentUser)
+   this.user_id = auth.currentUser.uid 
 
     bus.$on('searched', (data) => {
       this.filterType = 'title'
@@ -130,7 +131,7 @@ export default {
 
     this.loadingDishes = true
 
-    const collection = db.collection('Dishes').limit(4)
+    const collection = db.collection('Dishes').where('user_id','==', this.user_id)
     collection.onSnapshot(res => {
       const changes = res.docChanges()
       

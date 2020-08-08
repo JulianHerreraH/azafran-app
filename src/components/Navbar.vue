@@ -64,7 +64,7 @@
         >
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
-        <span class="hidden-sm-and-down ">Hola, Name</span>
+        <span class="hidden-sm-and-down ">{{userEmail}}</span>
     </v-app-bar>
 
     <v-navigation-drawer 
@@ -126,7 +126,8 @@ export default {
         text: '',
       },
       showSearchMobile: false,
-      loggedUser: false
+      loggedUser: false,
+      userEmail: null
     }
   },
 
@@ -172,6 +173,8 @@ export default {
     auth.onAuthStateChanged((user) => {
       if(user){
         this.loggedUser = true
+        this.userEmail = user.email
+
       } else {
         this.loggedUser = false
       }

@@ -13,8 +13,8 @@
       <v-img
         class="mx-auto white-bg"
         :src="imageURL"
-        contain
-        :aspect-ratio="16/9"
+        cover
+        :aspect-ratio="1.65/1"
       >
       <template v-slot:placeholder>
           <v-row

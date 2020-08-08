@@ -46,8 +46,8 @@
         class="mx-auto outline"
         :src="imageURL"
         :width="imgWidth"
-        contain
         dark
+        cover
         :aspect-ratio="16/9"
       >
         <template v-slot:placeholder>

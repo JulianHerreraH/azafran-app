@@ -201,7 +201,7 @@
 </template>
 
 <script>
-import {db, storage} from '../firebase/fb'
+import {db, storage, auth} from '../firebase/fb'
 import {bus} from '../main'
 
 export default {
@@ -229,6 +229,7 @@ export default {
         difficulty: '',
         rating: null,
         imageURL: null,
+        user_id: null
       }, 
       imageFile: null,
     }
@@ -259,8 +260,6 @@ export default {
         const nDate = new Date(this.date)
         const timestamp = nDate.getTime()
         this.dish.timestamp = timestamp
-
-      
 
         let uploadTask = storage
         .ref()
@@ -316,6 +315,8 @@ export default {
   },
   
   created() {
+    this.dish.user_id = auth.currentUser.uid
+
     const diffRef = db.collection('Difficulty')
     diffRef.orderBy('num', 'asc').get().then(querySnapshot => {
       querySnapshot.forEach(doc => {
