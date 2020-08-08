@@ -1,7 +1,5 @@
 <template>
-
   <div class="dashboard pa-3">
-
   <v-container fluid fill-height class="my-2 my-sm-4"> 
     <v-row align="center" class="mb-2"> 
       <v-col cols="8" md="10" class="indigo--text text--darken-2 text-left">
@@ -60,7 +58,7 @@
 import DishCard from "@/components/DishCard";
 import DishCreate from "@/components/DishCreate";
 import {bus} from '../main'
-import {db} from '../firebase/fb'
+import {db, auth} from '../firebase/fb'
 
 export default {
   name: "Home",
@@ -115,6 +113,8 @@ export default {
   created() {
 
     console.log('dash created')
+    
+    console.log(auth.currentUser)
 
     bus.$on('searched', (data) => {
       this.filterType = 'title'
