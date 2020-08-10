@@ -1,6 +1,7 @@
 <template>
-  <v-row justify="center">
-    <v-dialog v-model="showDialog" 
+  <v-row justify="center" >
+    <v-dialog 
+      v-model="showDialog" 
       persistent  
       max-width="60%"
       class="px-sm-5" 
@@ -9,7 +10,7 @@
       <template v-slot:activator="{ on: dialog }">
         <v-tooltip left>
           <template v-slot:activator="{on: tooltip}">
-          <v-btn class="indigo accent-3 ma-2" fab dark bottom right fixed v-on="{...tooltip, ...dialog}">
+          <v-btn class="deep-purple accent-3 ma-2" fab dark bottom right fixed v-on="{...tooltip, ...dialog}">
             <v-icon>add</v-icon>
           </v-btn>
           </template>
@@ -19,7 +20,7 @@
     
       <v-card>
           <v-card-title>
-            <h1 class="text-h4 indigo--text ">Añadir platillo</h1>
+            <h1 class="text-h4 deep-purple--text ">Añadir platillo</h1>
           </v-card-title>
           <v-card-text>
             <v-form class="px-2" ref="form">
@@ -61,6 +62,7 @@
                         label="Fecha de cocinado"
                         readonly
                         v-bind="attrs"
+                        :rules="[rules.minLength]"
                         v-on="on"
                       ></v-text-field>
                     </template>
@@ -134,7 +136,7 @@
                 <v-col cols="12" sm="8">
                   <v-text-field 
                     label="Link receta (opcional)" 
-                    v-model.lazy.trim="dish.link"
+                    v-model="dish.link"
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="4" class="text-center">
@@ -185,7 +187,7 @@
             class="my-2 mx-2"
           >Cerrar</v-btn>
           <v-btn 
-            color="indigo darken-1" 
+            color="deep-purple darken-1" 
             large  
             dark 
             class="my-2 mx-2"
@@ -201,25 +203,12 @@
 </template>
 
 <script>
-import {db, storage, auth} from '../firebase/fb'
-import {bus} from '../main'
-
 export default {
-
   data() {
     return {
-      showDialog: false,
-      difficulties: [],
-      cuisines: [],
       date: new Date().toISOString().substr(0, 10),
       menuDate: false,
-      loading: false,
       noRating: null,
-      rules: {
-        maxLength: value => (value && value.length <= 35) || 'Límite es 35 caracteres',
-        minLength: value => !!value || 'Campo no puede estar vacío',
-        descriptionCounter: value => (value && value.length <= 350) || 'Límite es 350 caracteres',
-      },
       dish: {
         title: '',
         timestamp: null,
@@ -232,7 +221,33 @@ export default {
         user_id: null
       }, 
       imageFile: null,
+      rules: {
+        maxLength: value => (value && value.length <= 35) || 'Límite es 35 caracteres',
+        minLength: value => !!value || 'Campo no puede estar vacío',
+        descriptionCounter: value => (value && value.length <= 350) || 'Límite es 350 caracteres',
+      },
     }
+  },
+
+  computed: {
+    showDialog:  {
+      get(){
+        return this.$store.state.dialog
+      },
+      set(value){
+        this.$store.commit('setDialog', value)
+      }
+    }, 
+    loading() {
+      return this.$store.state.loading
+    },
+    difficulties() { 
+      return this.$store.state.difficulties
+    },
+    cuisines() {
+      return this.$store.state.cuisines
+    },
+    
   },
 
   methods: {
@@ -245,103 +260,38 @@ export default {
       }
     },
     filePicked(file) {
-      console.log(file)
       this.imageFile = file
     },
     submit() {
-
       if(this.$refs.form.validate()) {
         if (!this.dish.rating) {
           this.noRating = true
           return
         } 
         
-        this.loading = true
         const nDate = new Date(this.date)
         const timestamp = nDate.getTime()
         this.dish.timestamp = timestamp
 
-        let uploadTask = storage
-        .ref()
-        .child('Dish_Images/'+ this.imageFile.name)
-        .put(this.imageFile)
-
-        console.log('before upload')
-
-        uploadTask.on('state_changed', snapshot => {
-          let progress = (snapshot.bytesTransferred /snapshot.totalBytes) * 100
-          console.log('Upload is ' + progress + '% done');
-        }, error => {
-          let snackbar = {
-            isVisible: true,
-            color: 'error',
-            text: 'Error subiendo imagen'
-          }
-          bus.$emit('snackbar', snackbar)
-          console.log("Error uploading image", error)
-        }, () => {
-          uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
-            this.dish.imageURL = downloadURL
-
-            db.collection('Dishes').add(this.dish).then(() => {
-            this.showDialog = false
-            this.loading = false
-            let snackbar = {
-              isVisible: true,
-              color: 'success',
-              text: '¡Nuevo platillo agregado!'
-            }
-            bus.$emit('snackbar', snackbar)
-            }).catch((error) => {
-              let snackbar = {
-                isVisible: true,
-                color: 'error',
-                text: 'Error agregando platillo'
-              }
-              bus.$emit('snackbar', snackbar)
-              console.log("Error getting document:", error)
-              })
-          })
+        if(this.dish.link == undefined) this.dish.link == ''
+        
+        this.$store.dispatch('createDish', {
+          imageFile: this.imageFile,
+          dish: this.dish
         })
- 
+        
       }
-      
     },
     closeForm() {
       this.$refs.form.reset()
-      this.showDialog = false
-    }
-
+      this.$store.commit('setDialog', false)
+    },
   },
   
   created() {
-    this.dish.user_id = auth.currentUser.uid
-
-    const diffRef = db.collection('Difficulty')
-    diffRef.orderBy('num', 'asc').get().then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-          this.difficulties.push(doc.data().value)
-      })
-    }).catch(error => {
-      this.snackbar.isVisible = true
-      this.snackbar.text = 'Error cargando datos de dificultad'
-      this.snackbar.color = 'error'
-      console.log("Error getting document:", error)
-    })
-
-    const cuisineRef = db.collection('Cuisines')
-    cuisineRef.orderBy('name', 'asc').get().then(querySnapshot => {
-      querySnapshot.forEach(doc => {
-          this.cuisines.push(doc.data().name)
-      })
-    }).catch(error => {
-      this.snackbar.isVisible = true
-      this.snackbar.text = 'Error cargando datos de cocinas'
-      this.snackbar.color = 'error'
-      console.log("Error getting document:", error)
-    })
+    console.log('dis-create')
+    this.$store.dispatch('getCategories')
   }
-
 }
 </script>
 

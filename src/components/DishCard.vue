@@ -24,7 +24,7 @@
           >
             <v-progress-circular 
               indeterminate 
-              color="indigo" 
+              color="deep-purple" 
               size="48"
             ></v-progress-circular>
           </v-row>
@@ -32,7 +32,7 @@
       </v-img>
 
       <v-card-title 
-      class="font-weight-bold text-xl-h3 text-sm-h4 indigo--text pb-1"
+      class="font-weight-bold text-xl-h3 text-sm-h4 deep-purple--text pb-1"
       >{{dish.title}}</v-card-title>
 
       <v-row 
@@ -77,28 +77,18 @@
       </v-row>
 
       <v-card-actions>
-        <v-btn color="indigo" text @click.stop="dishDetail">
+        <v-btn color="deep-purple" text router :to="dishRoute">
           Ver más
         </v-btn>
       </v-card-actions>
     </v-card>
-    <dish-detail 
-      :dish="dish" 
-      :show="showDetail" 
-      v-if="dish && showDetail"
-    ></dish-detail>
   </v-col>
 </template>
 
 <script>
-import {bus} from '../main'
-import DishDetail from "@/components/DishDetail";
 
 export default {
   name: 'DishCard',
-  components: {
-    'dish-detail': DishDetail,
-  },
   data() {
     return {
       levels:{
@@ -127,6 +117,9 @@ export default {
   computed: {
     imageURL() {
       return this.dish.imageURL || this.defaultImage
+    },
+    dishRoute() {
+      return `dish/${this.dish.id}`
     }
   },
 
@@ -154,21 +147,12 @@ export default {
           return 'red'
       }
     },
-    dishDetail() {
-      this.showDetail = true
-    },
     filterByCuisine() {
-      bus.$emit('filterDishes', {type: 'cuisine', value: this.dish.cuisine})
+      this.$store.commit('setFilter', {type: 'cuisine', query: this.dish.cuisine})
     },
     filterByDifficulty() {
-      bus.$emit('filterDishes', {type: 'difficulty', value: this.dish.difficulty})
+     this.$store.commit('setFilter', {type: 'difficulty', query: this.dish.difficulty})
     },
-  },
-
-  created() {
-    bus.$on('showDetail', (data) => {
-      this.showDetail = data
-    })
   }
 }
 </script>

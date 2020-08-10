@@ -1,26 +1,17 @@
 <template>
   <div>
     <v-snackbar
-      v-model="snackbar.isVisible"
+      v-model="snackbar.visible"
       :color="snackbar.color"
       dark
+      timeout="3000"
       top
     >
       {{snackbar.text}}
-      <template v-slot:action="{ attrs }">
-        <v-btn
-          dark
-          text
-          v-bind="attrs"
-          @click="snackbar.isVisible = false"
-        >
-          Cerrar
-        </v-btn>
-      </template>
     </v-snackbar>
 
     <v-app-bar 
-      color="indigo" 
+      color="deep-purple " 
       app 
       flat 
       dark 
@@ -28,13 +19,14 @@
       v-if="loggedUser"
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer" ></v-app-bar-nav-icon>
-        <v-toolbar-title  class="text-h5 hidden-sm-and-down">FOOD BLOG</v-toolbar-title>
+        <v-toolbar-title class="text-h5 hidden-sm-and-down">AZAFRÁN</v-toolbar-title>
+        <v-img max-width="32" :src="icon" class="ml-2 hidden-sm-and-down"></v-img>
         <v-spacer></v-spacer>
-    
         <v-text-field
           flat
           solo-inverted
           hide-details
+          rounded
           clearable
           prepend-inner-icon="mdi-magnify"
           label="Buscar..."
@@ -64,21 +56,20 @@
         >
           <v-icon>mdi-magnify</v-icon>
         </v-btn>
-        <span class="hidden-sm-and-down ">{{userEmail}}</span>
+        <span class="hidden-sm-and-down ">{{userName}}</span>
     </v-app-bar>
 
     <v-navigation-drawer 
       v-model="drawer" 
       app 
-      :clipped="$vuetify.breakpoint.lgAndUp" 
       dark 
-      class="indigo white--text"
+      :clipped="$vuetify.breakpoint.lgAndUp" 
+      class="deep-purple lighten-1 white--text"
       v-if="loggedUser"
       > 
-      
       <v-list-item class="hidden-md-and-up">
         <v-list-item-content>
-          <v-list-item-title class="text-h5">FOOD BLOG</v-list-item-title>
+          <v-list-item-title class="text-h5">AZAFRÁN</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
       <v-divider class="hidden-md-and-up"> </v-divider>
@@ -97,18 +88,13 @@
           <v-list-item-content>
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
-
         </v-list-item>
-
       </v-list>
-
      </v-navigation-drawer>
   </div>
 </template>
 
 <script>
-import {bus} from '../main'
-import {auth} from '../firebase/fb'
 
 export default {
   data(){
@@ -120,14 +106,8 @@ export default {
         { title: 'Mi Cuenta', icon: 'mdi-account', route: '/account', },
         { title: 'Cerrar Sesión', icon: 'mdi-logout', route: '/logout', },
       ],
-      snackbar: {
-        isVisible: false,
-        color: '',
-        text: '',
-      },
       showSearchMobile: false,
-      loggedUser: false,
-      userEmail: null
+      icon: require('../assets/flower.png')
     }
   },
 
@@ -138,7 +118,7 @@ export default {
       }, 
       searched() {
         this.showSearchMobile = false
-        bus.$emit('searched', this.searchTerm)
+        this.$store.commit('setFilter', {type: 'title', query: this.searchTerm})
       },
       showSearch() {
         if(this.$vuetify.breakpoint.mdAndUp) {
@@ -147,17 +127,7 @@ export default {
         return this.showSearchMobile ? 'd-flex mt-5' : 'd-none'
       },
       logout(){
-        console.log('User', auth.currentUser)
-        auth.signOut().then(() => {
-          this.$router.push({name: 'Landing'})
-          this.snackbar.isVisible = true
-          this.snackbar.color = 'success'
-          this.snackbar.text = 'Sesión cerrada exitosamente'
-        }).catch(() => {
-          this.snackbar.isVisible = true
-          this.snackbar.color = 'error'
-          this.snackbar.text = 'Error al cerrar sesión'
-        })
+        this.$store.dispatch('logOutUser')
       },
       clickFun(item) {
         if(item.route == '/logout'){
@@ -165,23 +135,20 @@ export default {
         } 
       }
   },
-  
-  created() {
-    bus.$on('snackbar', (data) => {
-      this.snackbar = data
-    })
-    auth.onAuthStateChanged((user) => {
-      if(user){
-        this.loggedUser = true
-        this.userEmail = user.email
+  computed: {
+    snackbar() {
+      let snackbar = {...this.$store.state.snackbar}
+      return snackbar
+    },
+    loggedUser() {
+      return this.$store.getters.isAuthenticated
+    },
+    userName() {
+      return this.$store.state.user.name
+    }
+  },
 
-      } else {
-        this.loggedUser = false
-      }
-    })
-  }
-
-};
+}
 </script>
 
 <style>

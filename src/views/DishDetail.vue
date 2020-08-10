@@ -1,24 +1,18 @@
 <template>
-<v-row>
-  <v-dialog 
-    v-model="show" 
-    max-width="75%"
-    persistent
-    :fullscreen="$vuetify.breakpoint.smAndDown"
-  >
-    <v-card class="px-3" shaped outlined>
+  <v-container fluid fill-height v-if="detailDish">
+    <v-card outlined width="90%" class="mx-auto ">
       <v-card-title class="justify-center">
           <v-row align="center">
             <v-col cols="0">
-              <h1 class="indigo--text text-h5 text-sm-h3" >{{detailDish.title}}</h1>
+              <h1 class="deep-purple--text text-h5 text-sm-h3" >{{detailDish.title}}</h1>
             </v-col>
             <v-col cols="2" class="text-right">
               <v-btn 
-                icon 
-                large 
-                @click="closeDialog"
-                color="indigo"
-              > <v-icon>close</v-icon>
+                text
+                large
+                @click="$router.go(-1)"
+                color="deep-purple"
+              > Regresar
               </v-btn>
             </v-col>
           </v-row>
@@ -58,7 +52,7 @@
           >
             <v-progress-circular 
               indeterminate 
-              color="indigo" 
+              color="deep-purple" 
               size="48"
             ></v-progress-circular>
           </v-row>
@@ -106,13 +100,7 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn 
-          color="info" 
-          large  
-          dark 
-          class="my-2 mx-2"
-          @click.stop="editDish()"
-        >Editar</v-btn>
+        <dish-edit :dish="detailDish"></dish-edit>
         <v-dialog v-model="confirmDelete" persistent max-width="400px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -139,15 +127,10 @@
         <v-spacer></v-spacer>
       </v-card-actions>
     </v-card>
-
-  </v-dialog>
-  <dish-edit :dish="detailDish" :showEdit="showEdit"></dish-edit>
-</v-row>
+  </v-container>
 </template>
 
 <script>
-import {bus} from '../main'
-import {db, storage} from '../firebase/fb'
 import DishEdit from "@/components/DishEdit";
 
 export default {
@@ -156,33 +139,20 @@ export default {
   },
   data() {
     return {
-      loading: false,
       defaultImage: require('../assets/no_image.jpg'),
       levels:{
         easy: 'fácil',
         medium: 'media',
         hard: 'difícil'
       },
-      showEdit: false,
-      detailDish: {},
       confirmDelete: false
     }
   },
 
-  props: {
-    dish: {
-      type: Object,
-      required: true,
-    },
-    show: {
-      type: Boolean,
-      required: true
-    }
-  },
 
   computed: {
     link() {
-      return this.dish.link == '' ? 'Platillo sin link' : `Link:` 
+      return this.detailDish.link.trim() == '' ? 'Platillo sin link' : `Link:` 
     },
     imgWidth() {
       let width 
@@ -194,42 +164,22 @@ export default {
       return width
     },
     imageURL() {
-      return this.dish.imageURL || this.defaultImage
+      return this.detailDish.imageURL || this.defaultImage
     },
+    loading() {
+      return this.$store.state.loading
+    },
+    detailDish() {
+      let id = this.$route.params.id
+      let dish = this.$store.getters.getDish(id)
+      console.log(dish)
+      return dish
+    }
   },
 
   methods: {
-    closeDialog() {
-      bus.$emit('showDetail', false)
-    },
-    editDish() {
-      this.showEdit = true
-    },
     deleteDish() {
-      this.loading = true
-
-      let ref = storage.refFromURL(this.detailDish.imageURL)
-      ref.delete().then(() => {
-        db.collection('Dishes').doc(this.detailDish.id).delete().then(() => {
-          bus.$emit('showDetail', false)
-          this.loading = false
-          let snackbar = {
-            isVisible: true,
-            color: 'info',
-            text: '¡Platillo eliminado exitosamente!'
-          }
-          bus.$emit('snackbar', snackbar)
-        })
-      }).catch((error) => {
-        let snackbar = {
-          isVisible: true,
-          color: 'error',
-          text: 'Error eliminando platillo :('
-        }
-        bus.$emit('snackbar', snackbar)
-        console.log("Error uploading image", error)
-      })
-
+      this.$store.dispatch('deleteDish', {dish: this.detailDish})
     },
     formattedDate(timestamp) {
       const dateISO = new Date(timestamp).toISOString().substring(0,10)
@@ -244,7 +194,7 @@ export default {
       return color;
     },
     getDifficultyColor() {
-      const diff = this.dish.difficulty.toLowerCase()
+      const diff = this.detailDish.difficulty.toLowerCase()
       switch(diff) {
         case this.levels.easy:
           return 'green'
@@ -257,17 +207,12 @@ export default {
   },
 
   created() {
-    this.detailDish = Object.assign({}, this.dish)
-
-    bus.$on('showEdit', (data) => {
-      this.showEdit = data
-    })
-    bus.$on('dishUpdated', (data) => {
-      this.detailDish = data
-    })
+    // Call Firebase listener for the first time (page reload)
+    if(this.$store.state.listenerActive == null) {
+      console.log('getDishes first time dashboard')
+      this.$store.dispatch('getDishes')
+    }
   }
-
-
 
 }
 </script>

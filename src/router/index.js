@@ -1,9 +1,11 @@
 import Vue from 'vue'
+import store from '../store'
 import VueRouter from 'vue-router'
 import Dashboard from '../views/Dashboard.vue'
 import Account from '../views/Account.vue'
 import Landing from '../views/Landing.vue'
-import { auth } from '../firebase/fb'
+import DishDetail from '../views/DishDetail.vue'
+
 
 Vue.use(VueRouter)
 
@@ -20,6 +22,14 @@ Vue.use(VueRouter)
     path: '/account',
     name: 'Account',
     component: Account,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/dish/:id',
+    name: 'DishDetail',
+    component: DishDetail,
     meta: {
       requiresAuth: true
     }
@@ -42,7 +52,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  let user = auth.currentUser
+  let user = store.state.user
   if(to.matched.some(rec => rec.meta.requiresAuth)) {
     if(user) {
       next() // User signed in, proceed
