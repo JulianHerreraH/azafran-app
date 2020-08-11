@@ -1,12 +1,12 @@
 <template>
   <v-container fluid fill-height v-if="detailDish">
-    <v-card outlined width="90%" class="mx-auto ">
+    <v-card width="100%" class="mx-auto">
       <v-card-title class="justify-center">
           <v-row align="center">
-            <v-col cols="0">
+            <v-col cols="7" sm="10">
               <h1 class="deep-purple--text text-h5 text-sm-h3" >{{detailDish.title}}</h1>
             </v-col>
-            <v-col cols="2" class="text-right">
+            <v-col cols="5" sm="2" class="text-right">
               <v-btn 
                 text
                 large
@@ -172,7 +172,6 @@ export default {
     detailDish() {
       let id = this.$route.params.id
       let dish = this.$store.getters.getDish(id)
-      console.log(dish)
       return dish
     }
   },

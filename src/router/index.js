@@ -5,6 +5,7 @@ import Dashboard from '../views/Dashboard.vue'
 import Account from '../views/Account.vue'
 import Landing from '../views/Landing.vue'
 import DishDetail from '../views/DishDetail.vue'
+import Discover from '../views/Discover.vue'
 
 
 Vue.use(VueRouter)
@@ -41,8 +42,15 @@ Vue.use(VueRouter)
     meta: {
       requiresAuth: false
     }
+  },
+  {
+    path: '/discover',
+    name: 'Discover',
+    component: Discover,
+    meta: {
+      requiresAuth: true
+    }
   }
-
 ]
 
 const router = new VueRouter({

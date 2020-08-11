@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import router from '@/router'
 import createPersistedState from 'vuex-persistedstate'
 import {auth, db, storage} from '../firebase/fb'
+import axios from 'axios'
 
 Vue.use(Vuex)
 
@@ -19,6 +20,7 @@ const store = new Vuex.Store({
     dishes: [],
     difficulties: [],
     cuisines: [],
+    recipes: [],
     loading: false,
     snackbar: {
       visible: false,
@@ -76,6 +78,9 @@ const store = new Vuex.Store({
     },
     setCuisines(state, payload) {
       state.cuisines = payload
+    },
+    setRecipes(state, payload) {
+      state.recipes = payload
     }
   },
 
@@ -408,6 +413,38 @@ const store = new Vuex.Store({
         console.log("Error getting document:", error)
       })
     },
+
+    // Recipes functions
+    getRecipes({ commit }, search ) {
+      const proxy = "https://cors-anywhere.herokuapp.com/"
+      const url = 'https://test-es.edamam.com/search'
+      const min = Math.floor(Math.random() * 50)
+      const high = min + 6
+      axios
+        .get( proxy+url, {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
+          params: {
+            q: search,
+            app_id: 'cf1a370d',
+            app_key: '32061c28c9f06828fc31b3af929d7ca3',
+            from: min,
+            to: high
+          }
+        })
+        .then(response => {
+          commit('setRecipes', response.data.hits)
+        })
+        .catch(() => {
+          commit('setRecipes', [])
+          commit('setSnackbar', {
+            visible: false,
+            color: 'error',
+            text: 'Error obteniendo recetas'
+          })
+        })
+    }
   },
 
   getters: {

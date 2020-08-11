@@ -54,7 +54,6 @@
 
       <v-card-text class="text--primary text-justify white--text py-1">
         {{dish.description | truncate(200) }}
-        <!-- <div v-for="ingredient in dish.ingredients" :key="ingredient">{{ingredient}}</div> -->
       </v-card-text>
 
       <v-row align="center" dense class="px-3">

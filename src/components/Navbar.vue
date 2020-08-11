@@ -104,6 +104,7 @@ export default {
       items: [
         { title: 'Tablero', icon: 'dashboard', route: '/', },
         { title: 'Mi Cuenta', icon: 'mdi-account', route: '/account', },
+        { title: 'Descubrir Recetas', icon: 'mdi-assistant', route: '/discover', },
         { title: 'Cerrar Sesión', icon: 'mdi-logout', route: '/logout', },
       ],
       showSearchMobile: false,

@@ -1,42 +1,39 @@
 <template>
   <div class="dashboard pa-3">
-  <v-container fluid fill-height class="my-2 my-sm-4"> 
-    <v-row align="center" class="mb-2"> 
-      <v-col cols="8" md="10" class="deep-purple--text text--darken-2 text-left">
-        <div class="text-h3 d-none d-sm-block">Mis platillos</div>
-        <h2 class="d-block d-sm-none">Mis platillos</h2>
-      </v-col>
-      <v-col cols="4" md="2" class="text-right">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-          <v-btn small color="deep-purple accent-3" @click="sortBy('date')" v-on="on">
-            <v-icon small class="white--text">sort</v-icon>
-            <span class="caption white--text d-none d-sm-flex">Por Fecha</span>
-          </v-btn>
-          </template>
-          <span> Organizar por fecha</span>
-        </v-tooltip>
-      </v-col>
-    </v-row>
-    <div 
-      v-if="filter.query != '' " 
-      class="text-center text-h5"
-    >
-      Resultados de tu filtrado
-      <a 
-        @click="resetDishes" 
-        class="text-decoration-underline text-body-1"
-      >Ver todos.</a>
-    </div>
-    <transition-group name="flip-list" tag="div" class="row">
-      <dish-card v-for="dish in filteredDishes(dishes)" :dish="dish" :key="dish.id"> </dish-card>
-    </transition-group>
-  </v-container>
-
-  <dish-create></dish-create>
-
+    <v-container fluid fill-height class="my-2 my-sm-4"> 
+      <v-row align="center" class="mb-2"> 
+        <v-col cols="8" md="10" class="deep-purple--text text--darken-2 text-left">
+          <div class="text-h3 d-none d-sm-block">Mis platillos</div>
+          <h2 class="d-block d-sm-none">Mis platillos</h2>
+        </v-col>
+        <v-col cols="4" md="2" class="text-right">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+            <v-btn small color="deep-purple accent-3" @click="sortBy('date')" v-on="on">
+              <v-icon small class="white--text">sort</v-icon>
+              <span class="caption white--text d-none d-sm-flex">Por Fecha</span>
+            </v-btn>
+            </template>
+            <span> Organizar por fecha</span>
+          </v-tooltip>
+        </v-col>
+      </v-row>
+      <div 
+        v-if="filter.query != '' " 
+        class="text-center text-h5"
+      >
+        Resultados de tu filtrado
+        <a 
+          @click="resetDishes" 
+          class="text-decoration-underline text-body-1"
+        >Ver todos.</a>
+      </div>
+      <transition-group name="flip-list" tag="div" class="row">
+        <dish-card v-for="dish in filteredDishes(dishes)" :dish="dish" :key="dish.id"> </dish-card>
+      </transition-group>
+    </v-container>
+    <dish-create></dish-create>
   </div>
-
 </template>
 
 <script>
@@ -75,7 +72,6 @@ export default {
 
     filteredDishes(dishes) {
       const filter = this.$store.state.filter
-      //const dishes = this.$store.state.dishes
       const arrFiltered = dishes.filter(dish => {
         switch(filter.type) {
           case 'title':
@@ -87,7 +83,6 @@ export default {
         }
       })
       return arrFiltered
-
     },
   },
 
@@ -100,10 +95,9 @@ export default {
       return this.$store.state.filter
     },
     dishes() {
-      return this.$store.state.dishes
+      let dishes = this.$store.state.dishes
+      return dishes
     },
-    
-
   },
 
   created() {
