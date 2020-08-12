@@ -2,11 +2,11 @@
   <div class="dashboard pa-3">
     <v-container fluid fill-height class="my-2 my-sm-4"> 
       <v-row align="center" class="mb-2"> 
-        <v-col cols="8" md="10" class="deep-purple--text text--darken-2 text-left">
+        <v-col cols="8"  class="deep-purple--text text--darken-2 text-left">
           <div class="text-h3 d-none d-sm-block">Mis platillos</div>
           <h2 class="d-block d-sm-none">Mis platillos</h2>
         </v-col>
-        <v-col cols="4" md="2" class="text-right">
+        <v-col cols="2" class="text-center">
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
             <v-btn small color="deep-purple accent-3" @click="sortBy('date')" v-on="on">
@@ -16,6 +16,12 @@
             </template>
             <span> Organizar por fecha</span>
           </v-tooltip>
+        </v-col>
+        <v-col cols="2" class="text-center">
+          <v-btn small color="deep-purple accent-3" @click="showFavorites">
+            <v-icon small class="white--text">favorite</v-icon>
+            <span class="caption white--text d-none d-sm-flex">{{favoriteText}}</span>
+          </v-btn>
         </v-col>
       </v-row>
       <div 
@@ -53,10 +59,16 @@ export default {
       filterType: 'title',
       hasFiltered: false,
       filterText: '',
+      favorites: false,
+      favoriteText: 'Ver Favoritos'
     }
   },
 
   methods: {
+    showFavorites() {
+      this.favorites = !this.favorites
+      this.favoriteText = this.favorites ? 'Esconder favoritos' : 'Ver Favoritos'
+    },
     sortBy() {
       this.dishes.sort((a,b) => {
         return a.timestamp - b.timestamp
@@ -72,6 +84,11 @@ export default {
 
     filteredDishes(dishes) {
       const filter = this.$store.state.filter
+
+      if(this.favorites) {
+        dishes = this.dishes.filter(item => item.isFavorite == true)
+      }
+
       const arrFiltered = dishes.filter(dish => {
         switch(filter.type) {
           case 'title':
@@ -87,7 +104,6 @@ export default {
   },
 
   computed: {
-
     loading() {
       return this.$store.state.loading
     },

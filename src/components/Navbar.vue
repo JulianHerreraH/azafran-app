@@ -103,8 +103,8 @@ export default {
       searchTerm: '',
       items: [
         { title: 'Tablero', icon: 'dashboard', route: '/', },
-        { title: 'Mi Cuenta', icon: 'mdi-account', route: '/account', },
         { title: 'Descubrir Recetas', icon: 'mdi-assistant', route: '/discover', },
+        { title: 'Mi Cuenta', icon: 'mdi-account', route: '/account', },
         { title: 'Cerrar Sesión', icon: 'mdi-logout', route: '/logout', },
       ],
       showSearchMobile: false,
@@ -113,28 +113,28 @@ export default {
   },
 
   methods: {
-      getDate() {
-        const date = new Date().toLocaleDateString();
-        return `${date}`
-      }, 
-      searched() {
-        this.showSearchMobile = false
-        this.$store.commit('setFilter', {type: 'title', query: this.searchTerm})
-      },
-      showSearch() {
-        if(this.$vuetify.breakpoint.mdAndUp) {
-          this.showSearchMobile =  false
-        }
-        return this.showSearchMobile ? 'd-flex mt-5' : 'd-none'
-      },
-      logout(){
-        this.$store.dispatch('logOutUser')
-      },
-      clickFun(item) {
-        if(item.route == '/logout'){
-          this.logout()
-        } 
+    getDate() {
+      const date = new Date().toLocaleDateString();
+      return `${date}`
+    }, 
+    searched() {
+      this.showSearchMobile = false
+      this.$store.commit('setFilter', {type: 'title', query: this.searchTerm})
+    },
+    showSearch() {
+      if(this.$vuetify.breakpoint.mdAndUp) {
+        this.showSearchMobile =  false
       }
+      return this.showSearchMobile ? 'd-flex mt-5' : 'd-none'
+    },
+    logout(){
+      this.$store.dispatch('logOutUser')
+    },
+    clickFun(item) {
+      if(item.route == '/logout'){
+        this.logout()
+      } 
+    },
   },
   computed: {
     snackbar() {

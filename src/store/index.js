@@ -18,6 +18,7 @@ const store = new Vuex.Store({
     user: null,
     listenerActive: null,
     dishes: [],
+    totalDishes: [],
     difficulties: [],
     cuisines: [],
     recipes: [],
@@ -40,6 +41,9 @@ const store = new Vuex.Store({
     },
     setSnackbar(state, payload) {
       state.snackbar = payload
+    },
+    setSnackbarVisibility(state, payload){
+      state.snackbar.visible = payload
     },
     setUser(state, payload) {
       state.user = payload;
@@ -81,6 +85,9 @@ const store = new Vuex.Store({
     },
     setRecipes(state, payload) {
       state.recipes = payload
+    },
+    setTotalDishes(state, payload) {
+      state.totalDishes = payload
     }
   },
 
@@ -236,6 +243,25 @@ const store = new Vuex.Store({
           text: '¡Error editado tus datos!'
         })
       })
+    },
+    getAccountDetails({ commit }) {
+      commit('setLoading', true)
+      db.collection('Dishes')
+        .where('user_id', '==', this.state.user.user_id)
+        .get()
+        .then(snap => {
+          const size = snap.size
+          commit('setTotalDishes', size)
+          commit('setLoading', false)
+        })
+        .catch(() => {
+          commit('setLoading', false)
+          commit('setSnackbar', {
+            visible: true,
+            color: 'error',
+            text: '¡Error obteniendo datos!'
+          })
+        })
     },
 
     // Dish related functions
@@ -412,6 +438,24 @@ const store = new Vuex.Store({
         })
         console.log("Error getting document:", error)
       })
+    },
+    changeFavoriteStatus({ commit }, { id, value }) {
+      db.collection('Dishes')
+        .doc(id)
+        .update({
+          isFavorite: value
+        })
+        .then(() => {
+        })
+        .catch(error => {
+          commit('setLoading', false)
+          commit('setSnackbar', {
+            visible: false,
+            color: 'error',
+            text: 'Error agregando a favoritos'
+          })
+          console.log("Error getting document:", error)
+        })
     },
 
     // Recipes functions

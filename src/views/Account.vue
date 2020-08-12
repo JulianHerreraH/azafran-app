@@ -29,13 +29,6 @@
             </v-card-title>
 
             <v-card-text>
-              <v-row
-                align="center"
-                class="mx-0"
-              >
-                <div class="grey--text ml-4">Usuario desde: <b> --</b></div>
-              </v-row>
-
             <v-list >
               <v-subheader>Tus estadisticas</v-subheader>
               <v-list-item-group color="deep-purple">
@@ -46,7 +39,7 @@
                   <v-chip
                     class="ma-2"
                     color="primary"
-                  >5</v-chip>
+                  >{{totalDishes}}</v-chip>
                 </v-list-item>
               </v-list-item-group>
             </v-list>         
@@ -136,6 +129,9 @@ export default {
     },
     loading() {
       return this.$store.state.loading
+    },
+    totalDishes() {
+      return this.$store.state.totalDishes
     }
   },
 
@@ -152,6 +148,7 @@ export default {
 
   created() {
     this.editableUser = {...this.$store.state.user}
+    this.$store.dispatch('getAccountDetails')
   }
 }
 </script>

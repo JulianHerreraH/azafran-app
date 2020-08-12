@@ -60,7 +60,7 @@
         <v-chip 
           rounded 
           small 
-          :color="getColor()" 
+          :color="getColor" 
           class="mx-1" 
           dark 
           @click.stop="filterByCuisine"
@@ -68,7 +68,7 @@
         <v-chip 
           rounded 
           small 
-          :color="getDifficultyColor()" 
+          :color="getDifficultyColor" 
           class="mx-1" 
           dark 
           @click.stop="filterByDifficulty"
@@ -78,6 +78,14 @@
       <v-card-actions>
         <v-btn color="deep-purple" text router :to="dishRoute">
           Ver más
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+          icon
+          color="deep-purple accent-4"
+          @click="changeFavoriteStatus"
+        >
+          <v-icon>{{icon}}</v-icon>
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -119,13 +127,9 @@ export default {
     },
     dishRoute() {
       return `dish/${this.dish.id}`
-    }
-  },
-
-  methods: {
-    formattedDate(timestamp) {
-      const dateISO = new Date(timestamp).toISOString().substring(0,10)
-      return dateISO.split('-').reverse().join('-')
+    },
+    icon() {
+      return this.dish.isFavorite ? 'favorite' : 'favorite_border' 
     },
     getColor() {
       let letters = '0123456789ABCDEF';
@@ -137,20 +141,36 @@ export default {
     },
     getDifficultyColor() {
       const diff = this.dish.difficulty.toLowerCase()
+      let color
       switch(diff) {
         case this.levels.easy:
-          return 'green'
+          color = 'green'
+          break
         case this.levels.medium:
-          return 'yellow'
+          color = 'yellow'
+          break
         case this.levels.hard: 
-          return 'red'
+          color = 'red'
+          break
       }
+      return color
+    },
+  },
+
+  methods: {
+    formattedDate(timestamp) {
+      const dateISO = new Date(timestamp).toISOString().substring(0,10)
+      return dateISO.split('-').reverse().join('-')
     },
     filterByCuisine() {
       this.$store.commit('setFilter', {type: 'cuisine', query: this.dish.cuisine})
     },
     filterByDifficulty() {
      this.$store.commit('setFilter', {type: 'difficulty', query: this.dish.difficulty})
+    },
+    changeFavoriteStatus() {
+      this.dish.isFavorite = !this.dish.isFavorite
+      this.$store.dispatch('changeFavoriteStatus', {id: this.dish.id, value: this.dish.isFavorite})
     },
   }
 }

@@ -92,13 +92,6 @@
               <a :href="item.recipe.url">Ver Original</a>
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn
-                icon
-                color="deep-purple accent-4"
-                @click="heartClick = !heartClick"
-              >
-                <v-icon>{{icon}}</v-icon>
-              </v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -114,7 +107,6 @@ export default {
   data() {
     return {
       toggle: null,
-      heartClick: false,
       defaultImage: require('../assets/no_image.jpg')
     }
   },
@@ -123,9 +115,6 @@ export default {
     recipes() {
       return this.$store.state.recipes;
     },
-    icon() {
-      return this.heartClick ? 'favorite' : 'favorite_border' 
-    }
   },
 
   filters: {
