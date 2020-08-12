@@ -1,5 +1,4 @@
 <template>
-
   <v-col
     cols="12"
     lg="4"
@@ -33,7 +32,8 @@
 
       <v-card-title 
       class="font-weight-bold text-xl-h3 text-sm-h4 deep-purple--text pb-1"
-      >{{dish.title}}</v-card-title>
+      >{{dish.title}}
+      </v-card-title>
 
       <v-row 
         class="px-1" 
@@ -76,7 +76,12 @@
       </v-row>
 
       <v-card-actions>
-        <v-btn color="deep-purple" text router :to="dishRoute">
+        <v-btn 
+          color="deep-purple" 
+          text 
+          router 
+          :to="dishRoute"
+        >
           Ver más
         </v-btn>
         <v-spacer></v-spacer>
@@ -93,7 +98,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'DishCard',
   data() {
@@ -177,7 +181,7 @@ export default {
 </script>
 
 <style scoped>
-.white-bg {
-  background-color: white!important;
-}
+  .white-bg {
+    background-color: white!important;
+  }
 </style>

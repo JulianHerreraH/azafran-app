@@ -1,6 +1,5 @@
 <template>
   <v-container fluid class="my-2 my-sm-4"> 
-  
     <v-row align="center" class="mb-2"> 
       <v-col cols="8" md="10" class="deep-purple--text text--darken-2 text-left">
         <div class="text-h4 text-sm-h3">Descubrir</div>
@@ -33,8 +32,7 @@
           cols="12" 
           sm="4"
           v-for="(item, ndx) in recipes"
-          :key="ndx"
-          
+          :key="ndx" 
         >
           <v-card
             height="450px"
@@ -49,7 +47,6 @@
             cover
             max-width="80%"
             :aspect-ratio="1.65/1"
-            @error="showMe"
           >
             <template v-slot:placeholder>
               <v-row

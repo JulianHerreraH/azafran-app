@@ -1,42 +1,39 @@
 <template>
-<span>
-  <v-parallax
-    dark
-    class="full"
-  >
-  <v-row>
-    <v-col cols="12" sm="6" class="text-center mt-2">
-      <sign-up :show="form" ></sign-up> 
-      <v-btn 
-        class="info ma-2" 
-        dark 
-        rounded 
-        @click="showForm('register')"
-      >
-        ¡Crea una cuenta ahora!
-      </v-btn>
-    </v-col>
-    <v-col cols="12" sm="6"  class="text-center">
-      <login :show="form"></login>
-      <v-btn class="success ma-2" dark rounded  @click="showForm('login')">
-        ¡Inicia Sesión!
-      </v-btn>
-    </v-col>
-  </v-row>
-  
-    <v-row align="center" justify="center">
-      <v-col class="text-center" cols="12">
-        <v-img max-width="300" :src="icon" class="mx-auto"></v-img>
-          <h1 class="text-h3 text-sm-h1 font-weight-black mb-4 deep-purple--text ">Azafrán</h1>
-        <h4 class="text-h5 text-sm-h2  deep-purple--text text--lighten-1">Tu diario personal de recetas</h4>
+  <span>
+    <v-parallax
+      dark
+      class="full"
+    >
+    <v-row>
+      <v-col cols="12" sm="6" class="text-center mt-2">
+        <sign-up :show="form" ></sign-up> 
+        <v-btn 
+          class="info ma-2" 
+          dark 
+          rounded 
+          @click="showForm('register')"
+        >
+          ¡Crea una cuenta ahora!
+        </v-btn>
+      </v-col>
+      <v-col cols="12" sm="6"  class="text-center">
+        <login :show="form"></login>
+        <v-btn class="success ma-2" dark rounded  @click="showForm('login')">
+          ¡Inicia Sesión!
+        </v-btn>
       </v-col>
     </v-row>
     
-  </v-parallax>
-
-
-</span>
-
+      <v-row align="center" justify="center">
+        <v-col class="text-center" cols="12">
+          <v-img max-width="300" :src="icon" class="mx-auto"></v-img>
+            <h1 class="text-h3 text-sm-h1 font-weight-black mb-4 deep-purple--text ">Azafrán</h1>
+          <h4 class="text-h5 text-sm-h2  deep-purple--text text--lighten-1">Tu diario personal de recetas</h4>
+        </v-col>
+      </v-row>
+      
+    </v-parallax>
+  </span>
 </template>
 
 <script>
@@ -66,7 +63,6 @@ export default {
 
     methods: {
       changeForm(value) {
-        console.log(value)
         this.form = value
       },
       showForm(value) {
@@ -74,11 +70,6 @@ export default {
         this.form = value
       }
     },
-
-    created() {
-      console.log(localStorage)
-    }
-  
 }
 </script>
 

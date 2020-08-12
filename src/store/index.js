@@ -55,26 +55,19 @@ const store = new Vuex.Store({
       state.dialog = payload
     },
     setDishes(state, payload) {
-      console.log('add-dish')
-      if(state.listenerActive == null) {
+      if(state.listenerActive == null) 
         state.dishes = payload
-        console.log(state.dishes)
-      } else if (state.listenerActive) {
-        console.log('only one')
+      else if (state.listenerActive) 
         state.dishes.push(...payload)
-      } 
     },
     updateDishes(state, payload) {
-      const index = state
-      .dishes
-      .findIndex(item => item.id == payload.id)
+      const index = state.dishes.findIndex(item => item.id == payload.id)
       state.dishes.splice(index, 1, {...payload})
     },
     removeDishes(state, payload) {
       state.dishes = state.dishes.filter(item => item.id != payload)
     },
     setFilter(state, payload) {
-      console.log(payload)
       state.filter = {...payload}
     },
     setDifficulties(state, payload) {
@@ -94,6 +87,7 @@ const store = new Vuex.Store({
   actions: {
     // Auth functions
     registerUser({ commit }, { email, password, name, lastName }) {
+      commit('setSnackbarVisibility', false)
       commit('setLoading', true)
       auth
       .createUserWithEmailAndPassword(email, password)
@@ -142,6 +136,7 @@ const store = new Vuex.Store({
       })
     },
     loginUser({ commit }, { email, password }) {
+      commit('setSnackbarVisibility', false)
       commit('setLoading', true)
       auth
       .signInWithEmailAndPassword(email, password)
@@ -172,7 +167,6 @@ const store = new Vuex.Store({
       .catch(error => {
         commit('setLoading', false)
         const code = error.code
-        console.log(code)
         if (code === 'auth/wrong-password') {
           commit('setSnackbar', {
             visible: true,
@@ -195,6 +189,7 @@ const store = new Vuex.Store({
       })
     },
     logOutUser({ commit }) {
+      commit('setSnackbarVisibility', false)
       auth.signOut().then(() => {
         commit('setUser', null)
         commit('setListener', null)
@@ -215,13 +210,13 @@ const store = new Vuex.Store({
       })
     },
     editUser({ commit }, { name, lastName }) {
+      commit('setSnackbarVisibility', false)
       commit('setLoading', true)
       db.collection('Users')
       .doc(this.state.user.user_id)
       .update({
         name,
         lastName: lastName,
-        user_id: this.state.user.user_id
       })
       .then(() => {
         commit('setLoading', false)
@@ -233,6 +228,8 @@ const store = new Vuex.Store({
         commit('setUser', {
           name,
           lastName,
+          user_id: this.state.user.user_id,
+          email: this.state.user.email
         })
       })
       .catch(() => {
@@ -245,6 +242,7 @@ const store = new Vuex.Store({
       })
     },
     getAccountDetails({ commit }) {
+      commit('setSnackbarVisibility', false)
       commit('setLoading', true)
       db.collection('Dishes')
         .where('user_id', '==', this.state.user.user_id)
@@ -266,17 +264,16 @@ const store = new Vuex.Store({
 
     // Dish related functions
     getDishes({ commit }) {
+      commit('setSnackbarVisibility', false)
       commit('setLoading', true)
       db.collection('Dishes')
       .where('user_id', '==', this.state.user.user_id)
       .onSnapshot(res => {
-        console.log('getDishes')
         let dishes = []
         res.docChanges().forEach(change => {
           if (change.type === 'added') {
             let dish = { ...change.doc.data(), id: change.doc.id}
             dishes.push(dish)
-            console.log('added')
             commit('setDishes', dishes)
           }
           if (change.type === 'modified') {
@@ -284,18 +281,14 @@ const store = new Vuex.Store({
               ...change.doc.data(),
               id: change.doc.id
             })
-            
-            console.log('updated')
           }
           if (change.type === 'removed') {
             commit('removeDishes', change.doc.id)
-            console.log('modified')
           }
         })
         commit('setListener', true)  
         commit('setLoading', false)
-      }, (error) => {
-        console.log("Error getting document:", error)
+      }, () => {
         commit('setLoading', false)
         commit('setSnackbar', {
           visible: true,
@@ -306,19 +299,19 @@ const store = new Vuex.Store({
       
     },
     getCategories({ commit }) {
+      commit('setSnackbarVisibility', false)
       const diffRef = db.collection('Difficulty')
       let difficulties = []
       diffRef.orderBy('num', 'asc').get().then(querySnapshot => {
         querySnapshot.forEach(doc => {
           difficulties.push(doc.data().value)
         })
-      }).catch(error => {
+      }).catch(() => {
         commit('setSnackbar', {
           visible: true,
           text: 'Error cargando datos de dificultad',
           color: 'error'
         })
-        console.log("Error getting document:", error)
       })
       commit('setDifficulties', difficulties)
 
@@ -328,17 +321,17 @@ const store = new Vuex.Store({
         querySnapshot.forEach(doc => {
           cuisines.push(doc.data().name)
         })
-      }).catch(error => {
+      }).catch(() => {
         commit('setSnackbar', {
           visible: true,
           text: 'Error cargando datos de cocinas',
           color: 'error'
         })
-        console.log("Error getting document:", error)
       })
       commit('setCuisines', cuisines)
     },
     createDish({ commit }, { imageFile, dish }) {
+      commit('setSnackbarVisibility', false)
       commit('setLoading', true)
 
       let uploadTask = storage
@@ -346,25 +339,19 @@ const store = new Vuex.Store({
         .child('Dish_Images/' + imageFile.name)
         .put(imageFile)
 
-      console.log('before upload')
-
-      uploadTask.on('state_changed', snapshot => {
-        let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-        console.log('Upload is ' + progress + '% done');
-      }, error => {
+      uploadTask.on('state_changed', () => {
+      }, () => {
         commit('setLoading', false)
         commit( 'setSnackbar', {
           visible: true,
           color: 'error',
           text: 'Error subiendo imagen'
         })
-        console.log("Error uploading image", error)
       }, () => {
         uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
           dish.imageURL = downloadURL
           dish.user_id = this.state.user.user_id
           db.collection('Dishes').add(dish).then(() => {
-            console.log('create doish')
             commit('setDialog', false)
             commit('setLoading', false)
             commit('setSnackbar', {
@@ -373,19 +360,19 @@ const store = new Vuex.Store({
               text: '¡Nuevo platillo agregado!'
             })
           })
-          .catch((error) => {
+          .catch(() => {
             commit('setSnackbar',{
               isVisible: true,
               color: 'error',
               text: 'Error agregando platillo'
             })
-            console.log("Error getting document:", error)
           })
         })
       })
 
     },
     deleteDish({ commit }, { dish } ) {
+      commit('setSnackbarVisibility', false)
       commit('setLoading', true)
 
       let ref = storage.refFromURL(dish.imageURL)
@@ -404,17 +391,17 @@ const store = new Vuex.Store({
           })
           router.push({ name: 'Dashboard' })
         })
-      }).catch((error) => {
+      }).catch(() => {
         commit('setLoading', false)
         commit('setSnackbar', {
           visible: true,
           color: 'error',
           text: 'Error eliminando platillo'
         })
-        console.log("Error uploading image", error)
       })
     },
     editDish( {commit}, { dish } ) {
+      commit('setSnackbarVisibility', false)
       commit('setLoading', true)
 
       db.collection('Dishes')
@@ -429,37 +416,45 @@ const store = new Vuex.Store({
           text: '¡Platillo editado exitosamente!'
         })
       })
-      .catch(error => {
+      .catch(() => {
         commit('setLoading', false)
         commit('setSnackbar', {
-          visible: false,
+          visible: true,
           color: 'error',
           text: 'Error editando platillo :('
         })
-        console.log("Error getting document:", error)
       })
     },
     changeFavoriteStatus({ commit }, { id, value }) {
+      commit('setSnackbarVisibility', false)
+      let messageText = value ? 'Platillo agregado a favoritos' : 'Platillo eliminado de favoritos'
       db.collection('Dishes')
         .doc(id)
         .update({
           isFavorite: value
         })
         .then(() => {
-        })
-        .catch(error => {
           commit('setLoading', false)
           commit('setSnackbar', {
-            visible: false,
+            visible: true,
+            color: 'info',
+            text: messageText
+          })
+        })
+        .catch(() => {
+          commit('setLoading', false)
+          commit('setSnackbar', {
+            visible: true,
             color: 'error',
             text: 'Error agregando a favoritos'
           })
-          console.log("Error getting document:", error)
         })
     },
 
     // Recipes functions
     getRecipes({ commit }, search ) {
+      commit('setSnackbarVisibility', false)
+
       const proxy = "https://cors-anywhere.herokuapp.com/"
       const url = 'https://test-es.edamam.com/search'
       const min = Math.floor(Math.random() * 50)
@@ -483,7 +478,7 @@ const store = new Vuex.Store({
         .catch(() => {
           commit('setRecipes', [])
           commit('setSnackbar', {
-            visible: false,
+            visible: true,
             color: 'error',
             text: 'Error obteniendo recetas'
           })

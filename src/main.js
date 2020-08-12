@@ -23,4 +23,3 @@ auth.onAuthStateChanged(() => {
   }
 })
 
-export const bus = new Vue()

@@ -35,7 +35,11 @@
         >Ver todos.</a>
       </div>
       <transition-group name="flip-list" tag="div" class="row">
-        <dish-card v-for="dish in filteredDishes(dishes)" :dish="dish" :key="dish.id"> </dish-card>
+        <dish-card 
+          v-for="dish in filteredDishes(dishes)" 
+          :dish="dish" 
+          :key="dish.id"
+        > </dish-card>
       </transition-group>
     </v-container>
     <dish-create></dish-create>
@@ -67,7 +71,7 @@ export default {
   methods: {
     showFavorites() {
       this.favorites = !this.favorites
-      this.favoriteText = this.favorites ? 'Esconder favoritos' : 'Ver Favoritos'
+      this.favoriteText = this.favorites ? 'Ver todos' : 'Ver Favoritos'
     },
     sortBy() {
       this.dishes.sort((a,b) => {
@@ -119,7 +123,6 @@ export default {
   created() {
     // Call Firebase listener for the first time
     if(this.$store.state.listenerActive == null) {
-      console.log('getDishes first time dashboard')
       this.$store.dispatch('getDishes')
     }
   }

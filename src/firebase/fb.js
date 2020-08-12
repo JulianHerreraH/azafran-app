@@ -12,9 +12,10 @@ var firebaseConfig = {
     storageBucket: "food-blog-da3f9.appspot.com",
     messagingSenderId: "591390816694",
     appId: "1:591390816694:web:6eb1c3de9ae76ee6f5a917"
-};
+}
+
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig)
 const db = firebase.firestore()
 const storage = firebase.storage()
 const auth = firebase.auth()

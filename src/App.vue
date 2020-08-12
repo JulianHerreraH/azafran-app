@@ -10,7 +10,6 @@
 <script>
 import Navbar from "@/components/Navbar";
 
-
 export default {
   name: "App",
 
@@ -22,7 +21,7 @@ export default {
   data: () => ({
     //
   })
-};
+}
 </script>
 
 <style >

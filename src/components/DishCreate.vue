@@ -10,7 +10,15 @@
       <template v-slot:activator="{ on: dialog }">
         <v-tooltip left>
           <template v-slot:activator="{on: tooltip}">
-          <v-btn class="deep-purple accent-3 ma-2" fab dark bottom right fixed v-on="{...tooltip, ...dialog}">
+          <v-btn 
+            class="deep-purple accent-3 ma-2" 
+            fab 
+            dark 
+            bottom 
+            right 
+            fixed 
+            v-on="{...tooltip, ...dialog}"
+          >
             <v-icon>add</v-icon>
           </v-btn>
           </template>
@@ -72,8 +80,16 @@
                     :first-day-of-week="0"
                     locale="es-MX">
                       <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="menuDate = false">Cancel</v-btn>
-                      <v-btn text color="primary" @click="$refs.menuDate.save(date)">OK</v-btn>
+                      <v-btn 
+                        text 
+                        color="primary" 
+                        @click="menuDate = false"
+                      >Cancel</v-btn>
+                      <v-btn 
+                        text 
+                        color="primary"
+                        @click="$refs.menuDate.save(date)"
+                      >OK</v-btn>
                     </v-date-picker>
                   </v-menu>
                 </v-col>
@@ -196,7 +212,6 @@
           >Guardar</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
-
       </v-card>
     </v-dialog>
   </v-row>
@@ -279,7 +294,6 @@ export default {
           imageFile: this.imageFile,
           dish: this.dish
         })
-        
       }
     },
     closeForm() {
@@ -289,7 +303,6 @@ export default {
   },
   
   created() {
-    console.log('dis-create')
     this.$store.dispatch('getCategories')
   }
 }

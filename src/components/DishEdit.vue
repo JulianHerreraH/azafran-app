@@ -1,48 +1,48 @@
 <template>
-    <v-dialog 
-      v-model="showDialog" 
-      persistent  
-      max-width="70%"
-      :fullscreen="$vuetify.breakpoint.smAndDown"
-    >   
-      <template v-slot:activator="{on}">
-        <v-btn 
-          color="info" 
-          large  
-          dark 
-          class="my-2 mx-2"
-          v-on="on"
-        >Editar</v-btn>
-      </template>
-      <v-card>
-        <v-card-title>
-          <v-row align="center">
-            <v-col cols="0">
-              <h1 class="deep-purple--text text-h5 text-sm-h3" >Editar Platillo</h1>
-            </v-col>
-            <v-col cols="2" class="text-right">
-              <v-btn 
-                icon 
-                large 
-                @click="closeForm"
-                color="deep-purple"
-              > <v-icon>close</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-title>
-        <v-card-text>
+  <v-dialog 
+    v-model="showDialog" 
+    persistent  
+    max-width="70%"
+    :fullscreen="$vuetify.breakpoint.smAndDown"
+  >   
+    <template v-slot:activator="{on}">
+      <v-btn 
+        color="info" 
+        large  
+        dark 
+        class="my-2 mx-2"
+        v-on="on"
+      >Editar</v-btn>
+    </template>
+    <v-card>
+      <v-card-title>
+        <v-row align="center">
+          <v-col cols="0">
+            <h1 class="deep-purple--text text-h5 text-sm-h3" >Editar Platillo</h1>
+          </v-col>
+          <v-col cols="2" class="text-right">
+            <v-btn 
+              icon 
+              large 
+              @click="closeForm"
+              color="deep-purple"
+            ><v-icon>close</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card-title>
+      <v-card-text>
         <v-form class="px-2" ref="editForm">
           <v-row align="center">
             <v-col cols="12" sm="8">
-                <v-text-field 
+              <v-text-field 
                 label="Nombre de platillo*" 
                 required 
                 counter="35"
                 v-model.lazy.trim="editedDish.title"
                 :rules="[rules.minLength, rules.maxLength]"
-                >
-                </v-text-field>
+              >
+              </v-text-field>
             </v-col>
             <v-col cols="12" sm="4">
               <v-menu
@@ -54,14 +54,13 @@
                 offset-y
                 min-width="290px"
               >
-
               <template v-slot:activator="{ on, attrs }">
                   <v-text-field
-                  v-model="dateC"
-                  label="Fecha de cocinado"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
+                    v-model="dateC"
+                    label="Fecha de cocinado"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
                   ></v-text-field>
               </template>
               <v-date-picker 
@@ -72,29 +71,37 @@
                 locale="es-MX"
               >
                   <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="menuDate = false">Cancel</v-btn>
-                  <v-btn text color="primary" @click="$refs.menuDate.save(dateC)">OK</v-btn>
+                  <v-btn 
+                    text 
+                    color="primary" 
+                    @click="menuDate = false"
+                  >Cancel</v-btn>
+                  <v-btn 
+                    text 
+                    color="primary" 
+                    @click="$refs.menuDate.save(dateC)"
+                  >OK</v-btn>
               </v-date-picker>
               </v-menu>
             </v-col>
-            </v-row>
+          </v-row>
 
-            <v-textarea
-              outlined
-              clearable
-              no-resize
-              counter="350"
-              required
-              v-model="editedDish.description"
-              :rules="[rules.minLength, rules.descriptionCounter]"
-              label="Descripción*"
-            ></v-textarea>
+          <v-textarea
+            outlined
+            clearable
+            no-resize
+            counter="350"
+            required
+            v-model="editedDish.description"
+            :rules="[rules.minLength, rules.descriptionCounter]"
+            label="Descripción*"
+          ></v-textarea>
 
-            <div 
+          <div 
             v-for="(ing, index) in editedDish.ingredients" 
             :key="index" 
             class="py-1"
-            >
+          >
             <v-text-field
               label="Ingrediente*"
               v-model.lazy.trim="editedDish.ingredients[index]"
@@ -103,55 +110,61 @@
               :rules="[rules.minLength]"
             >
               <template v-slot:append-outer v-if="index == 0">
-              <v-tooltip right>
+                <v-tooltip right>
                   <template v-slot:activator="{ on, attrs }">
-                  <v-btn 
+                    <v-btn 
                       icon 
                       color="green" 
                       @click="addIngredientField" 
                       v-on="on" 
                       v-bind="attrs"
-                  >
+                    >
                       <v-icon center>add_circle_outline</v-icon>
-                  </v-btn>
+                    </v-btn>
                   </template>
                   Agregar Ingrediente
-              </v-tooltip>
+                </v-tooltip>
               </template>
 
               <template v-slot:append-outer v-else>
-              <v-tooltip right>
-                  <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon color="red" @click="removeIngredientField(index)" v-on="on" v-bind="attrs">
-                      <v-icon center>remove_circle_outline</v-icon>
-                  </v-btn>
-                  </template>
-                  Eliminar Ingrediente
-              </v-tooltip>
+                <v-tooltip right>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn 
+                        icon 
+                        color="red" 
+                        @click="removeIngredientField(index)" 
+                        v-on="on" 
+                        v-bind="attrs"
+                        >
+                          <v-icon center>remove_circle_outline</v-icon>
+                      </v-btn>
+                    </template>
+                    Eliminar Ingrediente
+                </v-tooltip>
               </template>
             </v-text-field>
-            </div>
+          </div>
             
-            <v-row align="center" class="">
+          <v-row align="center" class="">
             <v-col cols="12" sm="8">
-                <v-text-field 
-                label="Link receta (opcional)" 
-                v-model.lazy.trim="editedDish.link"
-                ></v-text-field>
+              <v-text-field 
+              label="Link receta (opcional)" 
+              v-model.lazy.trim="editedDish.link"
+              ></v-text-field>
             </v-col>
             <v-col cols="12" sm="4" class="text-center">
-            <h3 class="grey--text ">Calificación*:</h3>
-            <v-rating
-              v-model="editedDish.rating"
-              color="amber"
-              background-color="orange lighen-3"
-              hover
-            ></v-rating>
-            <small class="red--text text-caption" v-if="noRating">¡Ingresa una calificación!</small>
+              <h3 class="grey--text ">Calificación*:</h3>
+              <v-rating
+                v-model="editedDish.rating"
+                color="amber"
+                background-color="orange lighen-3"
+                hover
+              ></v-rating>
+              <small class="red--text text-caption" v-if="noRating">¡Ingresa una calificación!</small>
             </v-col>
-            </v-row>
+          </v-row>
 
-            <v-row>
+          <v-row>
             <v-col cols="12" sm="6">
                 <v-autocomplete
                 :items="cuisines"
@@ -171,10 +184,10 @@
                 required
                 ></v-select>
             </v-col>
-            </v-row>
+          </v-row>
         </v-form>
         <small>*Campo obligatiorio</small>
-        </v-card-text>
+      </v-card-text>
 
       <v-card-actions>
           <v-spacer></v-spacer>
@@ -197,8 +210,8 @@
           >Actualizar</v-btn>
           <v-spacer></v-spacer>
       </v-card-actions>
-      </v-card>
-    </v-dialog>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -278,7 +291,7 @@ export default {
   },
   
   created() {
-    console.log('editCreated')
+    // Deep clone of the object
     this.editedDish = JSON.parse(JSON.stringify(this.dish))
   }
 

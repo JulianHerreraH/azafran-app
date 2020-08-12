@@ -61,7 +61,6 @@
 
       <v-card-text class="py-2">
         <h3 class="text-justify text-h6">{{detailDish.description}}</h3>
-
         <v-row align="stretch">
           <v-col cols="12" sm="6">
             <p class="text-h6 font-weight-bold">Ingredientes:</p> 
@@ -95,7 +94,6 @@
             </p> 
           </v-col>
         </v-row>
-
       </v-card-text>
 
       <v-card-actions>
@@ -137,6 +135,7 @@ export default {
   components: {
     'dish-edit': DishEdit,
   },
+
   data() {
     return {
       defaultImage: require('../assets/no_image.jpg'),
@@ -148,7 +147,6 @@ export default {
       confirmDelete: false
     }
   },
-
 
   computed: {
     link() {
@@ -208,7 +206,6 @@ export default {
   created() {
     // Call Firebase listener for the first time (page reload)
     if(this.$store.state.listenerActive == null) {
-      console.log('getDishes first time dashboard')
       this.$store.dispatch('getDishes')
     }
   }

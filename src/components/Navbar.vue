@@ -66,7 +66,7 @@
       :clipped="$vuetify.breakpoint.lgAndUp" 
       class="deep-purple lighten-1 white--text"
       v-if="loggedUser"
-      > 
+    > 
       <v-list-item class="hidden-md-and-up">
         <v-list-item-content>
           <v-list-item-title class="text-h5">AZAFRÁN</v-list-item-title>
@@ -136,6 +136,7 @@ export default {
       } 
     },
   },
+
   computed: {
     snackbar() {
       let snackbar = {...this.$store.state.snackbar}
@@ -148,7 +149,6 @@ export default {
       return this.$store.state.user.name
     }
   },
-
 }
 </script>
 

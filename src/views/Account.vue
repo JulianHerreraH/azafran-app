@@ -10,14 +10,17 @@
           Hoy es, {{currentDate}}
         </v-col>
       </v-row>
-      
       <v-row>
         <v-col cols="12" sm="4">
           <v-card
             align-self="center"
           >
             <v-card-title>
-              <v-avatar color="deep-purple" size="115" class="mx-auto">
+              <v-avatar 
+                color="deep-purple" 
+                size="115" 
+                class="mx-auto"
+              >
                 <v-icon size="100" dark>account_circle</v-icon>
               </v-avatar>
             </v-card-title>
@@ -29,24 +32,25 @@
             </v-card-title>
 
             <v-card-text>
-            <v-list >
-              <v-subheader>Tus estadisticas</v-subheader>
-              <v-list-item-group color="deep-purple">
-                <v-list-item>
-                  <v-list-item-content>
-                    <v-list-item-title>Platillos</v-list-item-title>
-                  </v-list-item-content>
-                  <v-chip
-                    class="ma-2"
-                    color="primary"
-                  >{{totalDishes}}</v-chip>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>         
+              <v-list >
+                <v-subheader>Tus estadísticas</v-subheader>
+                <v-list-item-group color="deep-purple">
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title>Platillos</v-list-item-title>
+                    </v-list-item-content>
+                    <v-chip
+                      class="ma-2"
+                      color="primary"
+                    >{{totalDishes}}</v-chip>
+                  </v-list-item>
+                </v-list-item-group>
+              </v-list>         
             </v-card-text>
             <v-divider class="mx-4"></v-divider>
           </v-card>
         </v-col>
+
         <v-col cols="12" sm="8" class="px-5">
           <h1 class="text-h5 grey--text">Edita tus datos</h1>
           <v-card>
@@ -83,19 +87,19 @@
                     ></v-text-field>
                   </v-col>
                 </v-row>
-
               </v-form>
             </v-card-text>
-                <v-card-actions class="pb-5">
-                  <v-spacer></v-spacer>
-                  <v-btn 
-                    color="deep-purple" 
-                    dark 
-                    @click="edit"
-                    :loading="loading"   
-                  >Actualizar</v-btn>
-                  <v-spacer></v-spacer>
-                </v-card-actions>
+
+            <v-card-actions class="pb-5">
+              <v-spacer></v-spacer>
+              <v-btn 
+                color="deep-purple" 
+                dark 
+                @click="edit"
+                :loading="loading"   
+              >Actualizar</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
@@ -124,7 +128,6 @@ export default {
       return new Date().toLocaleDateString()
     },
     user() {
-      console.log(localStorage)
       return {...this.$store.state.user}
     },
     loading() {
