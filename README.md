@@ -1,24 +1,28 @@
-# food-blog
+# Azafran
+Es un aplicacion web para los apasionados a la cocina. Te permite:
+- Crear, editar y eliminar tus recetas
+- Organizar tus recets por fecha o categoria
+- Descubrir nuevas recetas
 
-## Project setup
+## Pueba la aplicación aquí:
 ```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
+link
 ```
 
-### Lints and fixes files
-```
-npm run lint
-```
+### **Azafran** está hecho con: 
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+* [Vue.js] - Creación del front end
+* [Vuetify] - Framework de Material Desgin para Vue
+* [Firebase] - Para la base de datos, autenticación y almacenamiento
+* [Edamam] - API para buscar recetas
+
+
+## Desarrollado por 
+  - Julián Herrera
+
+
+[//]: # 
+   [Vue.js]: <https://vuejs.org/>
+   [Edamam]: <https://developer.edamam.com/>
+   [Vuetify]: <https://vuetifyjs.com/en/>
+   [Firebase]: <https://firebase.google.com/>
