@@ -5,9 +5,7 @@ Es un aplicacion web para los apasionados a la cocina. Te permite:
 - Descubrir nuevas recetas
 
 ## Pueba la aplicación aquí:
-```
-link
-```
+https://food-blog-da3f9.firebaseapp.com/landing
 
 ### **Azafran** está hecho con: 
 
